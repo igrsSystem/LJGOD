@@ -37,7 +37,7 @@ function App() {
       
       const dataResponse = await response.json()
       const {data} = dataResponse;
-      console.log(data, 'dados da API',data.length)
+      
       if(!data.length){
         setPhotos(mockPhotos)
         setLoading(false)
@@ -59,15 +59,6 @@ function App() {
       // Em caso de erro, carrega dados mockados
       setPhotos(mockPhotos)
     }
-    
-    
-    // ============================================
-    // DADOS MOCKADOS - REMOVER QUANDO API ESTIVER PRONTA
-    // ============================================
-    // Simula delay de rede
-    // await new Promise(resolve => setTimeout(resolve, 500))
-    // setPhotos(mockPhotos)
-    console.log('Fotos mockadas carregadas:', mockPhotos)
     
     setLoading(false)
   }
@@ -145,12 +136,13 @@ function App() {
         // Continua salvando localmente mesmo com erro na API
       }
       
-      
-      // Adiciona nova foto à lista
-      setPhotos([...photos, novaFoto])
-      
       // Fecha a câmera
       closeCamera()
+      // Adiciona nova foto à lista
+      //setPhotos([...photos, novaFoto])
+      await loadPhotos() // Recarrega fotos da API para garantir sincronização
+      
+
     }
   }
 

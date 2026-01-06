@@ -36,7 +36,7 @@ function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange, onDele
         <span className="payment-label">FORMA PG</span>
       </div>
 
-            {/* Botão PG / não PG */}
+      {/* Botão PG / não PG */}
       <div className="payment-exclude">
         <button 
           className={`btn-toggle excluded`}
