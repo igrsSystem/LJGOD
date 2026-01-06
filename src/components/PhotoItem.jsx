@@ -1,12 +1,12 @@
 import './PhotoItem.css'
 
-function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange }) {
+function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange, onDelete }) {
   return (
     <div className="photo-item">
       {/* Imagem */}
       <div className="photo-image">
         <img src={photo.image} alt="Foto capturada" />
-        <span className="image-label">IMAGEM</span>
+        {/* <span className="image-label">IMAGEM</span> */}
       </div>
 
       {/* Botão PG / não PG */}
@@ -33,6 +33,16 @@ function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange }) {
           <option value="CREDITO">CREDITO</option>
         </select>
         <span className="payment-label">FORMA PG</span>
+      </div>
+
+            {/* Botão PG / não PG */}
+      <div className="payment-exclude">
+        <button 
+          className={`btn-toggle excluded`}
+          onClick={() => onDelete(photo.id)}
+        >
+           {'Excluir'}
+        </button>
       </div>
     </div>
   )

@@ -63,6 +63,12 @@
   border-color: #4CAF50;
 }
 
+.btn-toggle.excluded {
+  background-color: #e21b14;
+  color: white;
+  border-color: #e21b14;
+}
+
 .btn-toggle.nao-pago {
   background-color: white;
   color: #333;

@@ -225,6 +225,29 @@ function App() {
     }
   }
 
+  // Excluir resgistro
+
+  const deletePhoto = async (id) => {
+    try {
+      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao excluir foto na API')
+      }
+
+      // Remove a foto da lista local
+      setPhotos(photos.filter(photo => photo.id !== id))
+      console.log('Foto excluída com sucesso')
+    } catch (error) {
+      console.error('Erro ao excluir foto:', error)
+    }
+  }
+
   return (
     <div className="app-container">
       {/* Botão para tirar foto */}
@@ -267,6 +290,7 @@ function App() {
                 photo={photo}
                 onPaymentStatusChange={updatePaymentStatus}
                 onPaymentMethodChange={updatePaymentMethod}
+                onDelete={deletePhoto}
               />
             ))
           )}
