@@ -23,7 +23,7 @@ function App() {
     // ============================================
     
     try {
-      const response = await fetch('http://localhost:3333/lavagem', {
+      const response = await fetch('https://fd95d6015009.ngrok-free.app/lavagem', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ function App() {
 
       setPhotos(data.map(item => ({
         id: item.id || item._id,
-        image: `http://localhost:3333/files/images/${item.image_url}`,
+        image: `https://fd95d6015009.ngrok-free.app/files/images/${item.image_url}`,
         pago: item.charge,
         formaPagamento: item.payment_method
       })))
@@ -116,7 +116,7 @@ function App() {
       // ============================================
     
       try {
-        const response = await fetch('http://localhost:3333/lavagem', {
+        const response = await fetch('https://fd95d6015009.ngrok-free.app/lavagem', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ function App() {
     
  
    try{
-      const response = await fetch(`http://localhost:3333/lavagem/${id}/charge`, {
+      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}/charge`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ function App() {
     // ))
 
       try{
-      const response = await fetch(`http://localhost:3333/lavagem/${id}/payment_method`, {
+      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}/payment_method`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
