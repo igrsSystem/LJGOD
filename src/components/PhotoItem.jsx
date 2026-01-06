@@ -28,6 +28,7 @@ function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange, onDele
         >
           <option value="INFORMAR"></option>
           <option value="NOTA">NOTA</option>
+          <option value="PIX">PIX</option>
           <option value="DINHEIRO">DINHEIRO</option>
           <option value="DEBITO">DEBITO</option>
           <option value="CREDITO">CREDITO</option>
