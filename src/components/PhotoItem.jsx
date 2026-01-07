@@ -66,13 +66,39 @@ function PhotoItem({ photo, onPaymentStatusChange, onPaymentMethodChange, onPaym
     }
   }
 
+  // Image zoom state
+  const [zoomOpen, setZoomOpen] = useState(false)
+
+  const openZoom = () => setZoomOpen(true)
+  const closeZoom = () => setZoomOpen(false)
+
+  useEffect(() => {
+    const onEsc = (ev) => {
+      if (ev.key === 'Escape') setZoomOpen(false)
+    }
+    if (zoomOpen) {
+      window.addEventListener('keydown', onEsc)
+    }
+    return () => window.removeEventListener('keydown', onEsc)
+  }, [zoomOpen])
+
   return (
     <div className="photo-item">
       {/* Imagem */}
       <div className="photo-image">
-        <img src={photo.image} alt="Foto capturada" />
+        <img src={photo.image} alt="Foto capturada" onClick={openZoom} />
         {/* <span className="image-label">IMAGEM</span> */}
       </div>
+
+      {/* Zoom overlay */}
+      {zoomOpen && (
+        <div className="image-zoom-overlay" role="dialog" aria-modal="true" onClick={closeZoom}>
+          <div className="image-zoom-content" onClick={(e) => e.stopPropagation()}>
+            <button className="image-zoom-close" onClick={closeZoom} aria-label="Fechar">✕</button>
+            <img src={photo.image} alt="Foto ampliada" />
+          </div>
+        </div>
+      )}
 
       {/* Botão PG / não PG */}
       <div className="payment-status">
