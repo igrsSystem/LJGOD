@@ -15,41 +15,79 @@ function App() {
     loadPhotos()
   }, [])
 
+  // Helper to normalize incoming value to cents (integer)
+  const parseAPIValueToCents = (value) => {
+    if (value === null || value === undefined || value === '') return 0
+    if (typeof value === 'number') {
+      // If it's a float (has decimals), treat as reais -> convert to cents
+      if (!Number.isInteger(value)) return Math.round(value * 100)
+      // otherwise assume it's already cents integer
+      return value
+    }
+    // string: replace thousand separators and convert comma to dot
+    const cleaned = String(value).replace(/\./g, '').replace(/,/g, '.')
+    const float = parseFloat(cleaned)
+    if (Number.isNaN(float)) return 0
+    return Math.round(float * 100)
+  }
+
   const loadPhotos = async () => {
     setLoading(true)
-    
+
     // ============================================
     // CARREGAR DA API - DESCOMENTAR QUANDO PRONTO
     // ============================================
-    
+
     try {
-      const response = await fetch('https://fd95d6015009.ngrok-free.app/lavagem', {
+      const response = await fetch(' https://28a47bd7dccb.ngrok-free.app/lavagem', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           // 'Authorization': 'Bearer SEU_TOKEN'
         }
       })
-      
+
       if (!response.ok) {
         throw new Error('Erro ao carregar fotos da API')
       }
-      
+
       const dataResponse = await response.json()
-      const {data} = dataResponse;
-      
-      if(!data.length){
+      const { data } = dataResponse;
+
+      if (!data.length) {
         setPhotos(mockPhotos)
         setLoading(false)
         console.log('Nenhuma foto na API, usando dados locais.')
         return
       }
 
+      // Helper to normalize incoming value to cents (integer)
+      const parseAPIValueToCents = (value) => {
+        console.log('Parsing API value to cents:', value)
+        if (value === null || value === undefined || value === '') return 0
+        if (typeof value === 'number') {
+          // If it's a float (has decimals), treat as reais -> convert to cents
+          if (!Number.isInteger(value)) return Math.round(value * 100)
+          // otherwise assume it's already cents integer
+          console.log('tetststststst', Math.round(value * 100))
+          console.log('Parsed integer value from API number(1):', value)
+          return Math.round(value * 100)
+        }
+        // string: replace comma with dot and parse float
+        const cleaned = String(value).replace(/\./g, '').replace(/,/g, '.')
+        const float = parseFloat(cleaned)
+        if (Number.isNaN(float)) return 0
+        console.log('Parsed float value from API string(2):', float)
+        return Math.round(float * 100)
+
+      }
+
       setPhotos(data.map(item => ({
         id: item.id || item._id,
-        image: `https://fd95d6015009.ngrok-free.app/files/images/${item.image_url}`,
+        image: `https://28a47bd7dccb.ngrok-free.app/files/images/${item.image_url}`,
         pago: item.charge,
-        formaPagamento: item.payment_method
+        formaPagamento: item.payment_method,
+        valor: parseAPIValueToCents(item.value || item.amount || item.valor || '')
       })))
 
       console.log('Fotos carregadas da API:', data)
@@ -59,19 +97,19 @@ function App() {
       // Em caso de erro, carrega dados mockados
       setPhotos(mockPhotos)
     }
-    
+
     setLoading(false)
   }
 
   // Função para abrir a câmera
   const openCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' } // Usa câmera traseira em celulares
       })
       streamRef.current = stream
       setShowCamera(true)
-      
+
       // Aguarda o vídeo estar pronto
       setTimeout(() => {
         if (videoRef.current) {
@@ -91,23 +129,25 @@ function App() {
       canvas.height = videoRef.current.videoHeight
       const ctx = canvas.getContext('2d')
       ctx.drawImage(videoRef.current, 0, 0)
-      
+
       const imageData = canvas.toDataURL('image/jpeg')
-      
+
       // Cria objeto com os dados da foto
       const novaFoto = {
         id: Date.now(),
         image: imageData, // Base64 da imagem
         pago: false,
         formaPagamento: 'INFORMAR'
+        ,
+        valor: 0 // cents
       }
-      
+
       // ============================================
       // ENVIO PARA API - DESCOMENTAR QUANDO PRONTO
       // ============================================
-    
+
       try {
-        const response = await fetch('https://fd95d6015009.ngrok-free.app/lavagem', {
+        const response = await fetch('https://28a47bd7dccb.ngrok-free.app/lavagem', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -119,29 +159,29 @@ function App() {
             payment_method: 'INFORMAR'
           })
         })
-        
+
         if (!response.ok) {
           throw new Error('Erro ao salvar foto na API')
         }
-        
+
         const data = await response.json()
-        
+
         // Atualiza a foto com o ID retornado pela API
         novaFoto.id = data.id || data._id
-        
+
         console.log('Foto salva com sucesso:', data)
       } catch (error) {
         console.error('Erro ao enviar foto para API:', error)
         alert('Erro ao salvar foto. Verifique sua conexão.')
         // Continua salvando localmente mesmo com erro na API
       }
-      
+
       // Fecha a câmera
       closeCamera()
       // Adiciona nova foto à lista
       //setPhotos([...photos, novaFoto])
       await loadPhotos() // Recarrega fotos da API para garantir sincronização
-      
+
 
     }
   }
@@ -160,10 +200,10 @@ function App() {
     // setPhotos(photos.map(photo => 
     //   photo.id === id ? { ...photo, pago } : photo
     // ))
-    
- 
-   try{
-      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}/charge`, {
+
+
+    try {
+      const response = await fetch(` https://28a47bd7dccb.ngrok-free.app/lavagem/${id}/charge`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -171,20 +211,20 @@ function App() {
         },
         body: JSON.stringify({ charge: pago })
       })
-      
+
       if (!response.ok) {
         throw new Error('Erro ao atualizar status na API')
       }
       // Recarrega fotos da API para garantir sincronização
       await
-          loadPhotos()
-     
+        loadPhotos()
+
       console.log('Status atualizado com sucesso')
     } catch (error) {
       console.error('Erro ao atualizar status:', error)
       // Mantém alteração local mesmo com erro
     }
-    
+
   }
 
   // Atualiza forma de pagamento
@@ -193,8 +233,8 @@ function App() {
     //   photo.id === id ? { ...photo, formaPagamento } : photo
     // ))
 
-      try{
-      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}/payment_method`, {
+    try {
+      const response = await fetch(` https://28a47bd7dccb.ngrok-free.app/lavagem/${id}/payment_method`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,26 +242,76 @@ function App() {
         },
         body: JSON.stringify({ payment_method: formaPagamento })
       })
-      
+
       if (!response.ok) {
         throw new Error('Erro ao atualizar payment_method na API')
       }
       // Recarrega fotos da API para garantir sincronização
       await
-          loadPhotos()
-     
+        loadPhotos()
+
       console.log('payment_method atualizado com sucesso')
     } catch (error) {
       console.error('Erro ao atualizar payment_method:', error)
       // Mantém alteração local mesmo com erro
     }
+
+  }
+
+  // Atualiza valor do pagamento (em reais)
+  // `valor` is decimal (reais) as a Number (e.g., 70.00)
+  const updatePaymentValue = async (id, valor) => {
+
+
+    console.log('Atualizar valor chamado para id:', id, 'com valor (reais):', valor)
+
+    try {
+      // Convert incoming decimal reais to cents integer for local storage
+      const cents = Math.round(Number(valor) * 100)
+      // Optimistic update locally (store cents)
+      setPhotos(prev => prev.map(photo => photo.id === id ? { ...photo, valor: cents } : photo))
+
+      // Send decimal (reais) to API (keeping two decimals)
+      const decimal = Number(Number(valor).toFixed(2))
+
+      const response = await fetch(` https://28a47bd7dccb.ngrok-free.app/lavagem/${id}/amount`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': 'Bearer SEU_TOKEN'
+        },
+        body: JSON.stringify({ amount: decimal })
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao atualizar valor na API')
+      }
+
+      // If server returns a value, normalize it back to cents and update that photo only
+      let resJson = null
+      try { resJson = await response.json() } catch (e) { /* no json */ }
+      if (resJson) {
+        const returned = resJson.amount || resJson.value || resJson.valor
+        if (returned !== undefined) {
+          const returnedCents = parseAPIValueToCents(returned)
+          setPhotos(prev => prev.map(photo => photo.id === id ? { ...photo, valor: returnedCents } : photo))
+        }
+      }
+
+      console.log('valor atualizado com sucesso')
+    } catch (error) {
+      console.error('Erro ao atualizar valor:', error)
+      // on error, reload to sync server state
+      await loadPhotos()
+    }
+    // `valor` comes in as cents (integer). We'll send it as cents in the body.
+
   }
 
   // Excluir resgistro
-
   const deletePhoto = async (id) => {
     try {
-      const response = await fetch(`https://fd95d6015009.ngrok-free.app/lavagem/${id}`, {
+      const response = await fetch(` https://28a47bd7dccb.ngrok-free.app/lavagem/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +335,7 @@ function App() {
       {/* Botão para tirar foto */}
       <div className="header">
         <button className="btn-camera" onClick={openCamera}>
-         📷 Registrar Lavagem
+          📷 Registrar Lavagem
         </button>
       </div>
 
@@ -282,6 +372,7 @@ function App() {
                 photo={photo}
                 onPaymentStatusChange={updatePaymentStatus}
                 onPaymentMethodChange={updatePaymentMethod}
+                onPaymentValueChange={updatePaymentValue}
                 onDelete={deletePhoto}
               />
             ))
@@ -291,5 +382,6 @@ function App() {
     </div>
   )
 }
+
 
 export default App
