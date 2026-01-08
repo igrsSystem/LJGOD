@@ -7,6 +7,8 @@ function App() {
   const [photos, setPhotos] = useState([])
   const [showCamera, setShowCamera] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [total, setTotal] = useState(null)
+  const [loadingTotal, setLoadingTotal] = useState(false)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -22,13 +24,38 @@ function App() {
       // If it's a float (has decimals), treat as reais -> convert to cents
       if (!Number.isInteger(value)) return Math.round(value * 100)
       // otherwise assume it's already cents integer
-      return value
+      //return value
+      return Math.round(value * 100)
     }
     // string: replace thousand separators and convert comma to dot
     const cleaned = String(value).replace(/\./g, '').replace(/,/g, '.')
     const float = parseFloat(cleaned)
     if (Number.isNaN(float)) return 0
     return Math.round(float * 100)
+  }
+
+  const formatDecimalToBRL = (decimal) => {
+    if (decimal === null || decimal === undefined) return '0,00'
+    const n = Number(decimal)
+    if (Number.isNaN(n)) return '0,00'
+    return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
+  // Fetch total amount from API (expects endpoint returning { total: 123.45 } or similar)
+  const fetchTotal = async () => {
+    setLoadingTotal(true)
+    try {
+      const res = await fetch('https://28a47bd7dccb.ngrok-free.app/lavagem/totalamount')
+      if (!res.ok) throw new Error('Erro ao carregar total')
+      const data = await res.json()
+      console.log('Total fetched from API:', data)
+      const raw = data.total ?? data.amount ?? data.value ?? data.valor ?? 0
+      const cents = parseAPIValueToCents(raw)
+      setTotal(cents / 100)
+    } catch (err) {
+      console.error('Erro ao buscar total:', err)
+    }
+    setLoadingTotal(false)
   }
 
   const loadPhotos = async () => {
@@ -98,6 +125,8 @@ function App() {
       setPhotos(mockPhotos)
     }
 
+    // Update total after loading photos
+    await fetchTotal()
     setLoading(false)
   }
 
@@ -337,6 +366,11 @@ function App() {
         <button className="btn-camera" onClick={openCamera}>
           📷 Registrar Lavagem
         </button>
+        <div className="total-box" title="Total registrado">
+          <div className="total-label">Total</div>
+          <div className="total-value">{loadingTotal ? '...' : `R$ ${formatDecimalToBRL(total ?? 0)}`}</div>
+          <button className="btn-refresh" onClick={fetchTotal} aria-label="Atualizar total">↻</button>
+        </div>
       </div>
 
       {/* Modal da câmera */}
