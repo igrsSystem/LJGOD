@@ -20,7 +20,10 @@ body {
 /* Header com botão de câmera */
 .header {
   margin-bottom: 20px;
-  text-align: center;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-camera {
@@ -36,6 +39,43 @@ body {
 .btn-camera:hover {
   background-color: #333;
   color: white;
+}
+
+.total-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #333;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: white;
+}
+
+.total-label {
+  font-size: 11px;
+  color: #666;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.total-value {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-refresh {
+  background: #4CAF50;
+  border: 2px solid #4CAF50;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.btn-refresh:hover {
+  background: #45a049;
+  border-color: #45a049;
 }
 
 /* Modal da câmera */
