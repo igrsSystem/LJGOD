@@ -45,7 +45,7 @@ function App() {
   const fetchTotal = async () => {
     setLoadingTotal(true)
     try {
-      const res = await fetch('https://28a47bd7dccb.ngrok-free.app/lavagem/totalamount')
+      const res = await fetch('https://331cebd1db40.ngrok-free.app/lavagem/totalamount')
       if (!res.ok) throw new Error('Erro ao carregar total')
       const data = await res.json()
       console.log('Total fetched from API:', data)
@@ -66,7 +66,7 @@ function App() {
     // ============================================
 
     try {
-      const response = await fetch('https://1b85e46240de.ngrok-free.app/lavagem', {
+      const response = await fetch('https://331cebd1db40.ngrok-free.app/lavagem', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ function App() {
 
       setPhotos(data.map(item => ({
         id: item.id || item._id,
-        image: `https://28a47bd7dccb.ngrok-free.app/files/images/${item.image_url}`,
+        image: `https://331cebd1db40.ngrok-free.app/files/images/${item.image_url}`,
         pago: item.charge,
         formaPagamento: item.payment_method,
         valor: parseAPIValueToCents(item.value || item.amount || item.valor || '')
@@ -232,7 +232,7 @@ function App() {
 
 
     try {
-      const response = await fetch(`https://1b85e46240de.ngrok-free.app/lavagem/${id}/charge`, {
+      const response = await fetch(`https://331cebd1db40.ngrok-free.app/lavagem/${id}/charge`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -263,7 +263,7 @@ function App() {
     // ))
 
     try {
-      const response = await fetch(`https://1b85e46240de.ngrok-free.app/lavagem/${id}/payment_method`, {
+      const response = await fetch(`https://331cebd1db40.ngrok-free.app/lavagem/${id}/payment_method`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -303,7 +303,7 @@ function App() {
       // Send decimal (reais) to API (keeping two decimals)
       const decimal = Number(Number(valor).toFixed(2))
 
-      const response = await fetch(`https://1b85e46240de.ngrok-free.app/lavagem/${id}/amount`, {
+      const response = await fetch(`https://331cebd1db40.ngrok-free.app/lavagem/${id}/amount`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ function App() {
   // Excluir resgistro
   const deletePhoto = async (id) => {
     try {
-      const response = await fetch(`https://1b85e46240de.ngrok-free.app/lavagem/${id}`, {
+      const response = await fetch(`https://331cebd1db40.ngrok-free.app/lavagem/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
