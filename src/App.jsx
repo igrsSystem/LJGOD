@@ -176,7 +176,7 @@ function App() {
       // ============================================
 
       try {
-        const response = await fetch('https://28a47bd7dccb.ngrok-free.app/lavagem', {
+        const response = await fetch('https://331cebd1db40.ngrok-free.app/lavagem', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
